@@ -1,3 +1,4 @@
+import './styles/styles.css'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, hashHistory, IndexRoute } from 'react-router';
@@ -7,6 +8,9 @@ import { ApolloProvider } from 'react-apollo';
 import App from './components/App';
 import PatientList from './components/PatientList';
 import SearchPatient from './components/SearchPatient';
+import PatientSearchPage from './components/patientsearch/PatientSearchPage';
+import MaterialSearchPage from './components/materialsearch/MaterialSearchPage';
+import AuditLogPage from './components/auditlog/AuditLogPage';
 
 const networkInterface = createNetworkInterface({
   uri: '/graphql',
@@ -28,6 +32,9 @@ const Root = () => {
             <Route path="/" component={App}>
               <Route path="patient" component={PatientList} />
               <Route path="searchpatient" component={SearchPatient} />
+              <Route path="patient-search" component={PatientSearchPage} />
+              <Route path="material-search" component={MaterialSearchPage} />
+              <Route path="audit-log" component={AuditLogPage} />
             </Route>
           </Router>
         </ApolloProvider>

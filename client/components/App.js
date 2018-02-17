@@ -1,12 +1,14 @@
 import React from 'react';
 
-import Header from './Header';
+import Header from './common/header/Header';
 
 const App = (props) => {
   return (
-    <div className="container">
-        <Header />
-        {props.children}
+    <div>
+      <Header />
+      <div className="main-body">
+          {props.children}
+      </div>
     </div>
   );
 };
