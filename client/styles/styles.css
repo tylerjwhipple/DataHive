@@ -70,6 +70,7 @@ input.search {
   font-family: 'Lato', sans-serif;
   margin: 3px 5px;
   float: left;
+  transition: border 0.35s;
 }
 
 input.search:focus {
@@ -572,6 +573,7 @@ tbody.search-body-list tr:hover {
   margin: 3px 5px;
   float: left;
   color: #2c3e50;
+  transition: border 0.35s;
 }
 
 .input-dropdown.active {
@@ -670,4 +672,5 @@ tbody.search-body-list tr:hover {
 
 .hidden {
   display: none;
+  transition: display 0.5s;
 }

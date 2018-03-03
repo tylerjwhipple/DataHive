@@ -24,16 +24,30 @@ class TableRow extends React.Component {
       });
   }
 
+
+  getTableRows() {
+    return Object.entries(this.props.tablerow).map((name, index) => {
+        if (this.props.exclude.indexOf(name[0]) === -1){
+            if (index === 1) {
+                return (
+                    <td key={index} className="first-td">{name[1]}</td>
+                );
+            }
+                return (
+                    <td key={index}>{name[1]}</td>
+                );
+        }
+    }); 
+  }
+
   render() {
     return (
-      <tr key={this.props.tablerow.id} onMouseOver={this.showDropdown} onMouseLeave={this.hideDropdown} onClick={this.props.showdetail} >
+      <tr key={this.props.primaryid} onMouseOver={this.showDropdown} onMouseLeave={this.hideDropdown} onClick={this.props.showdetail} >
           <td className="checkbox-td">
-              <input type="checkbox" name="name" value="1" />
+              <input type="checkbox" name="name" value={this.props.primaryid} />
           </td>
           <td className={"hover-td" + (this.state.show ? " active" : "")}></td>
-          <td className="first-td">{this.props.tablerow.id}</td>
-          <td>{this.props.tablerow.firstname}</td>
-          <td>{this.props.tablerow.lastname}</td>
+          {this.getTableRows()}
       </tr>
     );
   }

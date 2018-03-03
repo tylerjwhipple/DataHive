@@ -16,9 +16,15 @@ class ResultsContainer extends React.Component {
   }
 
   showDetails() {
-      this.setState({
-          show: true
-      });
+      if (this.state.show === true) {
+        this.setState({
+            show: false
+        });
+      } else {
+        this.setState({
+            show: true
+        });
+      }
   }
 
   hideDetails() {
@@ -27,47 +33,35 @@ class ResultsContainer extends React.Component {
       });
   }
 
-  getSearchPatientList() {
+  getHeaderRow() {
+    return this.props.header.map((name, index) => {
+        if (index === 0) {
+            return (
+                <th key={index} className="first-th">{name}</th>
+            );
+        }
+            return (
+                <th key={index}>{name}</th>
+            );
+    }); 
+  }
+
+  getSearchResultList() {
     if (Object.keys(this.props.result).length === 0) {
         return <tr><td>No results</td></tr>
     } else {
-    return this.props.result.map((visit) => {
+    return this.props.result.map((row, index) => {
       return (
-        <tr key={visit.location}>
-                <td className="checkbox-td">
-                    <input type="checkbox" name={visit.patientId} value={visit.patientId} />
-                </td>
-                <td className="hover-td active"></td>
-                <td className="first-td">{visit.visitDate}</td>
-                <td>{visit.department}</td>
-                <td>{visit.location}</td>
-                <td>{visit.chiefComplaint}</td>
-                <td>{visit.visitDesc}</td>
-                <td>{visit.doctor}</td>
-            </tr>
+        <TableRow key={index} primaryid={index} showdetail={this.showDetails} tablerow={row} exclude={this.props.excludelist} />
       );
     }); 
     }
   }
 
   render() {
-    let tablerows = this.props.tablerows.map(row => {
-      return <TableRow key={row.id} showdetail={this.showDetails} tablerow={row} />;
-      /*
-        <tr>
-                <td className="checkbox-td">
-                    <input type="checkbox" name={row.id} value={row.id} />
-                </td>
-                <td className="hover-td active"></td>
-                <td className="first-td">{row.firstname}</td>
-                <td>{row.lastname}</td>
-                <td>{row.gender}</td>
-            </tr>;
-            */
-    });
-
     return (
       <div className="result-container">
+      <div className="table-container">
             <table className={"ui celled table" + (this.state.show ? " active" : "")}>
           <thead>
               <tr>
@@ -75,18 +69,14 @@ class ResultsContainer extends React.Component {
                       <input type="checkbox" name="vehicle" value="All" />
                   </th>
                   <th className="hover-th"></th>
-                  <th className="first-th">Visit Date</th>
-                  <th>Department</th>
-                  <th>Location</th>
-                  <th>Chief Complaint</th>
-                  <th>Visit Description</th>
-                  <th>Doctor</th>
+                  {this.getHeaderRow()}
               </tr>
           </thead>
           <tbody className="search-body-list">
-          {this.getSearchPatientList()}
+          {this.getSearchResultList()}
           </tbody>
       </table>
+      </div>
 
       <DetailsContainer showdetail={this.hideDetails} show={this.state.show} />
       </div>

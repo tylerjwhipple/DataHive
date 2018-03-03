@@ -6,12 +6,14 @@ import SearchContainer from '../common/containers/searchcontainer/SearchContaine
 import ResultsContainer from '../common/containers/resultscontainer/ResultsContainer';
 import FooterContainer from '../common/containers/footercontainer/FooterContainer';
 import SearchInput from '../common/containers/searchcontainer/SearchInput';
+import SearchInputRef from '../common/containers/searchcontainer/SearchInputRef';
 import InputSelect from '../common/elements/InputSelect';
 import Button from '../common/elements/Button';
 
 import query from '../../queries/getSearchPatient';
 import GET_PATIENT_DROPDOWN from '../../queries/getPatientDropdown';
 import GET_VISITS from '../../queries/getVisits';
+import GET_CLINICAL_INFO from '../../queries/getClinicalInfo';
 
 const searchlist = [
   {label:'First Name', value: 'firstname'},
@@ -21,17 +23,18 @@ const searchlist = [
   {label: 'DOB', value: 'dob'}
 ];
 
-const tablerows = [
-  {id: 123456, firstname: "John", lastname: "Smith", gender: "Male"},
-  {id: 123457, firstname: "Elizabeth", lastname: "Samsonite", gender: "Female"},
-  {id: 123458, firstname: "Conner", lastname: "Whipple", gender: "Male"}
+const sectionlist = [
+  {optionvalue: "Visit", optionlabel: "Visit", type: "table-only"}, 
+  {optionvalue: "Clinical Information", optionlabel: "Clinical Information", type: "table-detail"}, 
+  {optionvalue: "Patient Summary", optionlabel: "Patient Summary", type: "detail-only"}
 ];
 
-const sectionlist = [
-  {optionvalue: "Visit", optionlabel: "Visit"}, 
-  {optionvalue: "Clinical Information", optionlabel: "Clinical Information"}, 
-  {optionvalue: "Patient Summary", optionlabel: "Patient Summary"}
-];
+const excludelist = ['patientId', '__typename'];
+
+let currentactive = {
+  selectedoption: '',
+  selectedsection: ''
+}
 
 class PatientSearchPage extends React.Component {
   constructor(props) {
@@ -44,6 +47,7 @@ class PatientSearchPage extends React.Component {
       ssn: null,
       selectedoption: null,
       selectedsection: '',
+      isSearchClicked: false,
       patientdropdown: [],
       result: []
     };
@@ -53,6 +57,10 @@ class PatientSearchPage extends React.Component {
     this.setState({
       [key]: update
   });
+  }
+
+  changeCurrentActive(update, key) {
+    currentactive[key] = update;
   }
 
   async getPatientList() {
@@ -68,7 +76,7 @@ class PatientSearchPage extends React.Component {
       }
       });
       const patientlist = result.data.getSearchPatientView.nodes;
-      this.setState({ patientdropdown: patientlist });
+      this.setState({ patientdropdown: patientlist, isSearchClicked: true });
   }
 
   async getVisits() {
@@ -82,11 +90,64 @@ class PatientSearchPage extends React.Component {
       },
     });
     const visits = result.data.allVisitsViews.nodes;
-    this.setState({ result: visits });
+    this.setState({ result: visits});
   }
 
+  async getClinicalInfo() {
+    const { selectedoption } = this.state;
+    const result = await this.props.client.query({
+      query: GET_CLINICAL_INFO,
+      variables: {
+          "ClinicalInfoViewCondition": {
+            "patientId": selectedoption
+          }
+      },
+    });
+    const visits = result.data.allClinicalInfoViews.nodes;
+    this.setState({ result: visits});
+  }
+
+  getResults() {
+    if (Object.keys(this.state.result).length === 0) {
+      return <div>No Results</div> 
+    } else {
+      if (currentactive.selectedsection === "Visit") {
+        const header = ['Visit Date', 'Department', 'Location', 'Chief Complaint', 'Visit Description', 'Doctor'];
+        return (
+          <div>       
+            <ResultsContainer header={header} excludelist={excludelist} result={this.state.result}/>
+            <FooterContainer />
+          </div>
+        );
+      } else if (currentactive.selectedsection === "Clinical Information") {
+        const header = ['Clinical Date', 'Code', 'Description', 'Doctor'];
+        return (
+          <div> 
+            <ResultsContainer header={header} excludelist={excludelist} result={this.state.result}/>
+            <FooterContainer />
+          </div>
+        );
+        }
+        else {
+          return (
+            <div>Other</div>
+          )
+        }
+    };
+  }
+
+  getData() {
+      if (currentactive.selectedsection === "Visit") {
+        this.getVisits();
+      } else if (currentactive.selectedsection === "Clinical Information") {
+        this.getClinicalInfo()
+        }
+        else {
+    }
+  }
+    
   render() {
-    console.log(this.state.selectedsection);
+    {console.log(currentactive.selectedsection);}
     return (
       <div>
         <div className="search-container">
@@ -98,32 +159,31 @@ class PatientSearchPage extends React.Component {
             <SearchInput label="MRN" value="mrn" searchChange={term => this.handleChange(term, "mrn")} />
             <div className="container-col">
               <span className="input-label"></span>
-              <Button text="Search" icon="search" type="search" buttonclick={() => this.getPatientList()}/>
+              <Button text="Search Patients" icon="search" type="search" buttonclick={() => this.getPatientList()}/>
             </div>
           </form>
         </div>
         <div className="search-container-bottom">
           <div className="container-col">
-            <span className="input-label">Patient Search</span>
+            <span className="input-label">Select Patient</span>
             <InputSelect
               options={this.state.patientdropdown} 
               selectedoption={option => this.handleChange(option, "selectedoption")}
               defaultoption={"Select Patient..."}
             />
+            <span className="input-label">Select Section</span>
             <InputSelect 
               options={sectionlist} 
-              selectedoption={option => this.handleChange(option, "selectedsection")}
+              selectedoption={option => this.changeCurrentActive(option, "selectedsection")}
               defaultoption={"Select Section..."}
             />
           </div>
           <div className="container-col">
           <span className="input-label"></span>
-          <Button text="Search" icon="search" type="search" buttonclick={() => this.getVisits()}/>
+          <Button text="Get Results" icon="search" type="search" buttonclick={() => this.getData()}/>
           </div>
         </div>
-        <ResultsContainer tablerows={tablerows} result={this.state.result}/>
-        <FooterContainer />
-        
+        {this.getResults()}
       </div>
     );
   }

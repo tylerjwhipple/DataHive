@@ -2,10 +2,10 @@ import gql from 'graphql-tag';
 
 export default gql`
 query getVisits($VisitsViewCondition: VisitsViewCondition) {
-    allVisitsViews(condition: $VisitsViewCondition) {
+    allVisitsViews(condition: $VisitsViewCondition, orderBy: VISIT_DATE_DESC) {
       nodes {
         patientId
-        visitDate
+        uiVisitDate
         department
         location
         chiefComplaint

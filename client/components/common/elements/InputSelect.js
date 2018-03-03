@@ -28,11 +28,12 @@ class InputDropdown extends React.Component {
       this.setState({
         show: false
     });
-    } else {
+    }
+    if (this.state.isSelectClicked === true) {
       this.setState({
         show: true
     });
-    } 
+    }
   }
 
   hideDropdown() {
@@ -62,13 +63,14 @@ class InputDropdown extends React.Component {
   }
 
   getOptions() {
-    if (Object.keys(this.props.options).length === 0) {
-        return (
-        <div className="item">
-          <span className="text">Please Search First</span>
-        </div>
-        );
-    } 
+  if (Object.keys(this.props.options).length === 0) {
+    return (
+    <div className="item">
+      <span className="text">Please Search First</span>
+    </div>
+    );
+}
+
     this.getMaxOption();
     return this.props.options.map((option) => {
       return (
@@ -81,10 +83,9 @@ class InputDropdown extends React.Component {
   }
 
   render() {
-    {console.log(this.state.isSelectClicked)}
     return (
-      <div className={"input-dropdown" + (this.state.show ? " active" : "")} onClick={this.showDropdown} onMouseEnter={this.checkClicked} onMouseLeave={this.hideDropdown} >
-      <div className="default" style={{width: this.getMaxOption(9) + 'px'}}>
+      <div className={"input-dropdown" + (this.state.show ? " active" : "")} onMouseLeave={this.hideDropdown} onMouseEnter={this.checkClicked} >
+      <div className="default" style={{width: this.getMaxOption(9) + 'px'}} onClick={this.showDropdown} >
         <div className="text" style={{width: this.getMaxOption(9) + 'px'}}>{this.state.optionvalue}</div>
         <i className="fa fa-chevron-down icon" aria-hidden="true"></i>
       </div>
