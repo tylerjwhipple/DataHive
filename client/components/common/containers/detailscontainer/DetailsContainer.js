@@ -1,6 +1,6 @@
 import React from 'react';
 
-import DetailsTableContainer from './DetailsTableContainer';
+import DetailsTableContainers from './DetailsTableContainers';
 import Button from '../../elements/Button';
 
 class DetailsContainer extends React.Component {
@@ -14,37 +14,42 @@ class DetailsContainer extends React.Component {
           <Button text="Export To PDF" icon="file-pdf-o" type="pdf" />
         </div>
           <div className="body">
-          <DetailsTableContainer hd="Header">
-          <table className="details-standard-table details-col-table">
-              <tbody>
-              <tr>
-                  <td className="label-td">First Name:</td>
-                  <td>Tyler</td>
-                  <td className="label-td">Last Name:</td>
-                  <td>Whipple</td>
-              </tr>
-              <tr>
-                  <td className="label-td">MRN:</td>
-                  <td>1456890</td>
-                  <td className="label-td">SSN:</td>
-                  <td>555-55-5555</td>
-              </tr>
-              <tr>
-                  <td className="label-td">Gender:</td>
-                  <td>Male</td>
-                  <td className="label-td">Age:</td>
-                  <td>29</td>
-              </tr>
-              <tr>
-                  <td className="label-td">Address:</td>
-                  <td>903 Skipton Drive</td>
-                  <td className="label-td">City:</td>
-                  <td>North Salt Lake</td>
-              </tr>
-              </tbody>
-          </table>
-          </DetailsTableContainer>
-          <div className="details-table-container">
+          {this.props.children}
+          {/* 
+
+      <div className="details-table-container">
+        <div className="details-table-container-hd">{this.props.hd}</div>
+                    <table className="details-standard-table details-col-table">
+                    <tbody>
+                    <tr>
+                        <td className="label-td">First Name:</td>
+                        <td>Tyler</td>
+                        <td className="label-td">Last Name:</td>
+                        <td>Whipple</td>
+                    </tr>
+                    <tr>
+                        <td className="label-td">MRN:</td>
+                        <td>1456890</td>
+                        <td className="label-td">SSN:</td>
+                        <td>555-55-5555</td>
+                    </tr>
+                    <tr>
+                        <td className="label-td">Gender:</td>
+                        <td>Male</td>
+                        <td className="label-td">Age:</td>
+                        <td>29</td>
+                    </tr>
+                    <tr>
+                        <td className="label-td">Address:</td>
+                        <td>903 Skipton Drive</td>
+                        <td className="label-td">City:</td>
+                        <td>North Salt Lake</td>
+                    </tr>
+                    </tbody>
+                </table>
+      </div>
+
+                  <div className="details-table-container">
             <div className="details-table-container-hd">Demographics</div>
             <table className="details-standard-table details-col-table">
                 <tbody>
@@ -131,6 +136,8 @@ class DetailsContainer extends React.Component {
                 </tbody>
             </table>
           </div>
+            */}
+
         </div>
       </div>
     );

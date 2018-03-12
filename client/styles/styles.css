@@ -177,7 +177,7 @@ input.search:focus {
   cursor: auto;
   background: #f9fafb;
   text-align: inherit;
-  padding: .92857143em .78571429em;
+  padding: .8em .78571429em;
   vertical-align: inherit;
   font-style: none;
   font-weight: 700;
@@ -201,6 +201,7 @@ input.search:focus {
 .ui.table td {
   padding: .78571429em .78571429em;
   padding: .62857143em .68571429em;
+  padding: .45em .6em;
   text-align: inherit;
 }
 
@@ -213,6 +214,14 @@ input.search:focus {
   width: 20px;
   padding: .92857143em .98571429em;
   padding: .62857143em .68571429em;
+  padding: .45em .5em;
+}
+
+tbody.search-body-list tr.active {
+  background: #f9f9f9; 
+}
+tbody.search-body-list tr.active:hover {
+  background: #f9f9f9;
 }
 
 tbody.search-body-list tr:hover {
@@ -231,6 +240,16 @@ tbody.search-body-list tr:hover {
 
 .ui.celled.table tr td.first-td, .ui.celled.table tr th.first-th {
   border-left: none;
+}
+
+.excel-checkbox {
+  margin-top: 1px;
+  margin-left: 4px;
+  color: #afb1b1;
+}
+
+.excel-checkbox.active {
+  color: #4fbb7e;
 }
 
 /* DETAILS PANE */
@@ -275,8 +294,9 @@ tbody.search-body-list tr:hover {
 .details-pane .body {
   border-left: 1px solid #ececec;
   padding: 15px;
-  overflow-y: auto;
+  overflow-y: scroll;
   overflow-x: hidden;
+  height: 560px;
 }
 
 /* DETAILS TABLE */
@@ -358,14 +378,18 @@ tbody.search-body-list tr:hover {
 /* FOOTER */
 
 .results-numbers {
-  float: left;
+  float: right;
   margin-top: 15px;
   margin-left: 15px;
   margin-right: 15px;
 }
 
+.pagination-center {
+  margin: 0 auto;
+}
+
 .pagination-outer {
-  float: right;
+  float: left;
   background: #fff;
   border: 1px solid #d9dadc;
   box-shadow: 0 1px 2px 0 rgba(34, 36, 38, .15);
@@ -382,11 +406,20 @@ tbody.search-body-list tr:hover {
   font-size: 14px;
 }
 
+.pagination-arrow {
+  padding: .9em 1.14em;
+}
+
 .pagination-left-item {
   border: none;
 }
 
 .pagination-item:hover {
+  background: rgba(0, 0, 0, .03);
+  color: #0087c7;
+}
+
+.pagination-item.active {
   background: rgba(0, 0, 0, .03);
   color: #0087c7;
 }
@@ -424,7 +457,7 @@ tbody.search-body-list tr:hover {
   margin-top: 5px;
   margin-left: 10px;
   margin-right: 15px;
-  float: right;
+  float: left;
 }
 
 .excel-button:hover {

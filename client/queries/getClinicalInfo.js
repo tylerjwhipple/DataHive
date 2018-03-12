@@ -1,14 +1,16 @@
 import gql from 'graphql-tag';
 
 export default gql`
-query getClinicalInfo($ClinicalInfoViewCondition: ClinicalInfoViewCondition) {
-  allClinicalInfoViews(condition: $ClinicalInfoViewCondition, orderBy: CLINICAL_DATE_DESC) {
+query getClinicalInfo($ClinicalInfoViewCondition: ClinicalInfoViewCondition, $offset: Int) {
+  allClinicalInfoViews(condition: $ClinicalInfoViewCondition, first: 20, offset: $offset, orderBy: CLINICAL_DATE_DESC) {
+    totalCount
     nodes {
-      patientId
       uiClinicalDate
-      clinicalId
+      code
       description
       doctor
+      patientId
+      clinicalId
     }
   }
 } 

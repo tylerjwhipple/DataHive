@@ -4,6 +4,9 @@ import { withApollo } from 'react-apollo/lib/graphql';
 
 import SearchContainer from '../common/containers/searchcontainer/SearchContainer';
 import ResultsContainer from '../common/containers/resultscontainer/ResultsContainer';
+import ResultTableContainer from '../common/containers/resultscontainer/ResultTableContainer';
+import DetailsContainer from '../common/containers/detailscontainer/DetailsContainer';
+import DetailsTableContainers from '../common/containers/detailscontainer/DetailsTableContainers';
 import FooterContainer from '../common/containers/footercontainer/FooterContainer';
 import SearchInput from '../common/containers/searchcontainer/SearchInput';
 import SearchInputRef from '../common/containers/searchcontainer/SearchInputRef';
@@ -14,6 +17,9 @@ import query from '../../queries/getSearchPatient';
 import GET_PATIENT_DROPDOWN from '../../queries/getPatientDropdown';
 import GET_VISITS from '../../queries/getVisits';
 import GET_CLINICAL_INFO from '../../queries/getClinicalInfo';
+import GET_MEDICATIONS from '../../queries/getMedication';
+import GET_LAB_TEST_TABLE from '../../queries/getLabTestTable';
+import GET_LAB_TEST_SUMMARY from '../../queries/getLabTestSummary';
 
 const searchlist = [
   {label:'First Name', value: 'firstname'},
@@ -29,28 +35,53 @@ const sectionlist = [
   {optionvalue: "Patient Summary", optionlabel: "Patient Summary", type: "detail-only"}
 ];
 
-const excludelist = ['patientId', '__typename'];
+const excludelist = ['patientId', 'clinicalId', '__typename'];
 
 let currentactive = {
   selectedoption: '',
-  selectedsection: ''
+  selectedsection: '',
+  offset: 0
+}
+
+const visitvariables = {
+  "VisitsViewCondition": {
+    "patientId": currentactive.selectedoption
+  }
+}
+
+const clinicalinfovariables = {
+  "ClinicalInfoViewCondition": {
+    "patientId": currentactive.selectedoption
+  }
 }
 
 class PatientSearchPage extends React.Component {
   constructor(props) {
     super(props);
+    this.showDetails = this.showDetails.bind(this);
+    this.hideDetails = this.hideDetails.bind(this);
     this.state = {
+      showdetails: false,
       patientid: null,
       firstname: '',
       lastname: '',
       mrn: null,
       ssn: null,
-      selectedoption: null,
-      selectedsection: '',
       isSearchClicked: false,
       patientdropdown: [],
-      result: []
+      result: [],
+      exceldata: [],
+      totalcount: null,
+      activerow: null,
+      offset: null,
+      medications: [],
+      labtesttable: [],
+      labtestsummary: []
     };
+    this.detaildata = [
+      {labtesttable : []}
+    ];
+    this.exceldata = [] 
   }
 
   handleChange(update, key) {
@@ -61,6 +92,27 @@ class PatientSearchPage extends React.Component {
 
   changeCurrentActive(update, key) {
     currentactive[key] = update;
+  }
+
+  showDetails(activerow) {
+    if (this.state.showdetails === true && this.state.activerow === activerow) {
+      this.setState({
+          showdetails: false,
+          activerow: null
+      });
+    } else {
+      this.setState({
+          showdetails: true,
+          activerow: activerow
+      });
+      this.getDetails(activerow);
+    }
+  }
+
+  hideDetails() {
+      this.setState({
+          showdetails: false
+      });
   }
 
   async getPatientList() {
@@ -80,74 +132,159 @@ class PatientSearchPage extends React.Component {
   }
 
   async getVisits() {
-    const { selectedoption } = this.state;
     const result = await this.props.client.query({
       query: GET_VISITS,
       variables: {
         "VisitsViewCondition": {
-          "patientId": selectedoption
-        }
+          "patientId": currentactive.selectedoption
+        },
+        "offset" : currentactive.offset
       },
     });
     const visits = result.data.allVisitsViews.nodes;
-    this.setState({ result: visits});
+    this.setState({ result: visits, totalcount: result.data.allVisitsViews.totalCount});
   }
 
   async getClinicalInfo() {
-    const { selectedoption } = this.state;
     const result = await this.props.client.query({
       query: GET_CLINICAL_INFO,
       variables: {
           "ClinicalInfoViewCondition": {
-            "patientId": selectedoption
+            "patientId": currentactive.selectedoption
+          },
+          "offset" : currentactive.offset
+      },
+    });
+    const results = result.data["allClinicalInfoViews"].nodes;
+    this.setState({ result: results, totalcount: result.data.allClinicalInfoViews.totalCount});
+  }
+
+  async getMedication(activerow) {
+    const result = await this.props.client.query({
+      query: GET_MEDICATIONS,
+      variables: {
+          "MedicationViewCondition": {
+            "clinicalId": activerow
           }
       },
     });
-    const visits = result.data.allClinicalInfoViews.nodes;
-    this.setState({ result: visits});
+    this.setState({ medications: result.data.allMedicationViews.nodes});
   }
 
-  getResults() {
+  async getLabTestTable(activerow) {
+    const result = await this.props.client.query({
+      query: GET_LAB_TEST_TABLE,
+      variables: {
+          "LabTestTableCondition": {
+            "clinicalId": activerow
+          }
+      },
+    });
+    this.setState({ labtesttable: result.data.allLabTestTables.nodes});
+  }
+
+  async getLabTestSummary(activerow) {
+    const result = await this.props.client.query({
+      query: GET_LAB_TEST_SUMMARY,
+      variables: {
+          "LabTestSummaryViewCondition": {
+            "clinicalId": activerow
+          }
+      },
+    });
+    this.setState({ labtestsummary: result.data.allLabTestSummaryViews.nodes});
+  }
+
+  async getResults(GET_QUERY, variableslist, resultview) {
+    const result = await this.props.client.query({
+      query: GET_QUERY,
+      variables: {variableslist}
+    });
+    const results = result.data[resultview].nodes;
+    this.setState({ result: results});
+  }
+
+  getData(querytype) {
+  if(querytype === "new-query") {
+    currentactive.offset = 0;
+    this.exceldata = [];
+  }
+    this.setState({ activerow: null});
+    if (currentactive.selectedsection === "Visit") {
+      this.getVisits()
+      //this.getResults(GET_VISITS, visitvariables, "allVisitsViews")
+    } else if (currentactive.selectedsection === "Clinical Information") {
+      this.getClinicalInfo() 
+      //this.getResults(GET_CLINICAL_INFO, clinicalinfovariables, "allClinicalInfoViews")
+    }
+  }
+
+  getDetails(activerow) {
+    this.getMedication(activerow);
+    this.getLabTestTable(activerow);
+    this.getLabTestSummary(activerow);
+  }
+
+  displayResults() {
     if (Object.keys(this.state.result).length === 0) {
       return <div>No Results</div> 
     } else {
       if (currentactive.selectedsection === "Visit") {
-        const header = ['Visit Date', 'Department', 'Location', 'Chief Complaint', 'Visit Description', 'Doctor'];
         return (
-          <div>       
-            <ResultsContainer header={header} excludelist={excludelist} result={this.state.result}/>
-            <FooterContainer />
+          <div>
+            <div className="result-container">
+              <ResultTableContainer
+                  resulttype="table-only"
+                  primaryid="visitsId"  
+                  excludelist={excludelist} 
+                  result={this.state.result}
+                  exceldata={this.exceldata} 
+                  show={this.state.showdetails} 
+                  showDetails={this.showDetails} />
+            </div>
+            <FooterContainer
+                totalcount={this.state.totalcount}
+                currentoffset={currentactive.offset}
+                handleOffset={event => this.changeCurrentActive(event, "offset")}
+                getData = {event => this.getData("pagination")}
+                excludelist={excludelist}  
+                exceldata = {this.exceldata}   
+            />
           </div>
         );
       } else if (currentactive.selectedsection === "Clinical Information") {
-        const header = ['Clinical Date', 'Code', 'Description', 'Doctor'];
         return (
-          <div> 
-            <ResultsContainer header={header} excludelist={excludelist} result={this.state.result}/>
-            <FooterContainer />
+          <div>
+            <div className="result-container">
+              <ResultTableContainer
+                  resulttype="table-detail"
+                  primaryid="clinicalId"  
+                  excludelist={excludelist} 
+                  result={this.state.result}
+                  exceldata={this.exceldata}  
+                  show={this.state.showdetails}
+                  activerow={this.state.activerow}
+                  showDetails={event => this.showDetails(event)} />
+              <DetailsContainer showdetail={this.hideDetails} show={this.state.showdetails}>
+                <DetailsTableContainers detailtype="standard-table" hd="Medications" result={this.state.medications} exclude={excludelist} />
+                <DetailsTableContainers detailtype="one-col-table" hd="Lab Test Summary" result={this.state.labtestsummary} exclude={excludelist} />
+                <DetailsTableContainers detailtype="standard-table" hd="Lab Test Table" result={this.state.labtesttable} exclude={excludelist} />
+              </DetailsContainer>
+            </div>
+              <FooterContainer 
+                      totalcount = {this.state.totalcount}
+                      currentoffset = {currentactive.offset}
+                      handleOffset = {event => this.changeCurrentActive(event, "offset")}
+                      getData = {event => this.getData("pagination")}
+                      exceldata = {this.exceldata}   
+                />
           </div>
         );
-        }
-        else {
-          return (
-            <div>Other</div>
-          )
         }
     };
   }
-
-  getData() {
-      if (currentactive.selectedsection === "Visit") {
-        this.getVisits();
-      } else if (currentactive.selectedsection === "Clinical Information") {
-        this.getClinicalInfo()
-        }
-        else {
-    }
-  }
     
   render() {
-    {console.log(currentactive.selectedsection);}
     return (
       <div>
         <div className="search-container">
@@ -168,7 +305,7 @@ class PatientSearchPage extends React.Component {
             <span className="input-label">Select Patient</span>
             <InputSelect
               options={this.state.patientdropdown} 
-              selectedoption={option => this.handleChange(option, "selectedoption")}
+              selectedoption={option => this.changeCurrentActive(option, "selectedoption")}
               defaultoption={"Select Patient..."}
             />
             <span className="input-label">Select Section</span>
@@ -180,10 +317,10 @@ class PatientSearchPage extends React.Component {
           </div>
           <div className="container-col">
           <span className="input-label"></span>
-          <Button text="Get Results" icon="search" type="search" buttonclick={() => this.getData()}/>
+          <Button text="Get Results" icon="bars" type="search" buttonclick={() => this.getData("new-query")}/>
           </div>
         </div>
-        {this.getResults()}
+        {this.displayResults()}
       </div>
     );
   }
@@ -191,11 +328,3 @@ class PatientSearchPage extends React.Component {
 
 export default withApollo(PatientSearchPage);
 
-/*
-export default graphql(query, {
-  options: { variables: {
-      "getFirstName": "B"
-    } }
- })(PatientSearchPage);
-
- */
