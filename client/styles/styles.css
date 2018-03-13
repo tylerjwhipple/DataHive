@@ -217,16 +217,16 @@ input.search:focus {
   padding: .45em .5em;
 }
 
-tbody.search-body-list tr.active {
-  background: #f9f9f9; 
-}
-tbody.search-body-list tr.active:hover {
-  background: #f9f9f9;
-}
-
-tbody.search-body-list tr:hover {
+tbody.search-body-list tr.tr-details:hover {
   background: #fbfcfc;
   cursor: pointer;
+}
+
+tbody.search-body-list tr.tr-details.active {
+  background: #f9f9f9; 
+}
+tbody.search-body-list tr.tr-details.active:hover {
+  background: #f9f9f9;
 }
 
 .ui.celled.table tr td.hover-td, .ui.celled.table tr th.hover-th {

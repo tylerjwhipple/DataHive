@@ -35,7 +35,7 @@ const sectionlist = [
   {optionvalue: "Patient Summary", optionlabel: "Patient Summary", type: "detail-only"}
 ];
 
-const excludelist = ['patientId', 'clinicalId', '__typename'];
+const excludelist = ['patientId', 'clinicalId', 'visitsId', '__typename'];
 
 let currentactive = {
   selectedoption: '',
@@ -235,7 +235,7 @@ class PatientSearchPage extends React.Component {
             <div className="result-container">
               <ResultTableContainer
                   resulttype="table-only"
-                  primaryid="visitsId"  
+                  primarykey="visitsId"  
                   excludelist={excludelist} 
                   result={this.state.result}
                   exceldata={this.exceldata} 
@@ -258,7 +258,7 @@ class PatientSearchPage extends React.Component {
             <div className="result-container">
               <ResultTableContainer
                   resulttype="table-detail"
-                  primaryid="clinicalId"  
+                  primarykey="clinicalId"  
                   excludelist={excludelist} 
                   result={this.state.result}
                   exceldata={this.exceldata}  

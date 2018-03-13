@@ -1,4 +1,5 @@
 import React from 'react';
+import { transformHeaderValue } from '../../CommonFunctions';
 
 class DetailsTableContainers extends React.Component {
 
@@ -7,7 +8,7 @@ class DetailsTableContainers extends React.Component {
             return Object.entries(this.props.result[0]).map((name, index) => {
                 if (this.props.exclude.indexOf(name[0]) === -1){
                         return (
-                            <th key={index}>{name[0]}</th>
+                            <th key={index}>{transformHeaderValue(name[0])}</th>
                         );
                 }
             }); 
@@ -44,7 +45,7 @@ class DetailsTableContainers extends React.Component {
                 if (this.props.exclude.indexOf(name[0]) === -1){
                         return (
                             <tr key={index}>
-                                <td className="label-td">{name[0]}</td>
+                                <td className="label-td">{transformHeaderValue(name[0])}</td>
                                 <td>{name[1]}</td>
                             </tr>
                         );

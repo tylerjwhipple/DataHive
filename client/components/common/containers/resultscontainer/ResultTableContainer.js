@@ -1,4 +1,5 @@
 import React from 'react';
+import { transformHeaderValue } from '../../CommonFunctions';
 
 import TableRow from './TableRow';
 
@@ -20,11 +21,11 @@ class ResultTableContainer extends React.Component {
                 if (this.props.excludelist.indexOf(name[0]) === -1){
                     if (index === 0) {
                         return (
-                            <th key={index} className="first-th">{name[0]}</th>
+                            <th key={index} className="first-th">{transformHeaderValue(name[0])}</th>
                         );
                     }
                         return (
-                            <th key={index}>{name[0]}</th>
+                            <th key={index}>{transformHeaderValue(name[0])}</th>
                         );
                 }
             }); 
@@ -37,9 +38,9 @@ class ResultTableContainer extends React.Component {
     } else {
     return this.props.result.map((row, index) => {
         return (
-        <TableRow key={index} index={index} primaryid={this.props.primaryid} 
+        <TableRow key={index} index={index} primarykey={this.props.primarykey} 
                 activerow={this.props.activerow} resulttype={this.props.resulttype}    
-                showDetails={event => this.props.showDetails(event)} tablerow={row} rowid={row[this.props.primaryid]}
+                showDetails={event => this.props.showDetails(event)} tablerow={row} rowid={row[this.props.primarykey]}
                 exceldata={this.props.exceldata} exclude={this.props.excludelist} />
         );
     }); 

@@ -11,52 +11,43 @@ class TableRow extends React.Component {
     let primaryid = null
   }
 
-  checkIfActiveCheckbox(primaryid) {
-    return this.props.exceldata.findIndex(function(el) {return el.visitsId === primaryid;}) !== -1;
-}
-
-  checkIfActiveCheckbox1(primaryid) {
-    return this.props.exceldata.indexOf(primaryid) !== -1
-}
-
-getCheckboxIndex(primaryid) {
-    return this.props.exceldata.findIndex(function(el) {return el.visitsId === primaryid;})
-}
-
-activateCheckbox(primaryid) {
-    this.state.checkbox ? this.setState({checkbox: false}) : this.setState({checkbox: true});
-    let index = this.getCheckboxIndex(primaryid);
-    index !== -1 ? this.props.exceldata.splice(index,1) : this.props.exceldata.push(this.props.tablerow);
-  }
-
-  activateCheckbox1(primaryid) {
-      this.state.checkbox ? this.setState({checkbox: false}) : this.setState({checkbox: true});
-      this.checkIfActiveCheckbox(this.props.rowid) ? this.props.exceldata.splice(this.props.exceldata.indexOf(this.props.rowid),1) : this.props.exceldata.push(this.props.rowid); 
-  }
-
-  activateRow() {
-    if (this.props.resulttype === "table-detail") {
-        return (
-            this.props.activerow === this.primaryid ? "active" : ""
-        );
-    } else {
-        return "";
+    checkIfActiveCheckbox(primaryid, primarykey) {
+        return this.props.exceldata.findIndex(function(el) {return el[primarykey] === primaryid;}) !== -1;
     }
-}
 
-activateTd() {
-    if (this.props.resulttype === "table-detail") {
-        return (
-            "hover-td" + (this.props.activerow === this.primaryid ? " active" : "")
-        );
-    } else {
-        return "hover-td";
+    getCheckboxIndex(primaryid, primarykey) {
+        return this.props.exceldata.findIndex(function(el) {return el[primarykey] === primaryid;})
     }
-}
+
+    activateCheckbox(primaryid, primarykey) {
+        this.state.checkbox ? this.setState({checkbox: false}) : this.setState({checkbox: true});
+        let index = this.getCheckboxIndex(primaryid, primarykey);
+        index !== -1 ? this.props.exceldata.splice(index,1) : this.props.exceldata.push(this.props.tablerow);
+    }
+
+    activateRow() {
+        if (this.props.resulttype === "table-detail") {
+            return (
+                "tr-details" + (this.props.activerow === this.primaryid ? " active" : "")
+            );
+        } else {
+            return "";
+        }
+    }
+
+    activateTd() {
+        if (this.props.resulttype === "table-detail") {
+            return (
+                "hover-td" + (this.props.activerow === this.primaryid ? " active" : "")
+            );
+        } else {
+            return "hover-td";
+        }
+    }
 
   getTableRows() {
     return Object.entries(this.props.tablerow).map((name, index) => {
-        if (name[0] === this.props.primaryid) {
+        if (name[0] === this.props.primarykey) {
            this.primaryid = name[1];
         }
         if (this.props.exclude.indexOf(name[0]) === -1){
@@ -77,11 +68,12 @@ activateTd() {
   }
 
   render() {
+      console.log(this.props.exceldata);
     return (
       <tr className={this.activateRow()}
         key={this.props.index}>
-          <td className="checkbox-td" onClick={event => {this.activateCheckbox(this.props.rowid)}}>
-                <i className={"fa fa-" + ((this.checkIfActiveCheckbox(this.props.rowid)) ? "check-square" : "square") + "-o excel-checkbox" + ((this.checkIfActiveCheckbox(this.props.rowid)) ? " active" : "")} 
+          <td className="checkbox-td" onClick={event => {this.activateCheckbox(this.props.rowid, this.props.primarykey)}}>
+                <i className={"fa fa-" + ((this.checkIfActiveCheckbox(this.props.rowid, this.props.primarykey)) ? "check-square-o excel-checkbox active" : "square-o excel-checkbox")} 
                 aria-hidden="true"></i>
           </td>
           <td className={this.activateTd()}></td>
