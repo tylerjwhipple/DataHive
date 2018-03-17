@@ -39,14 +39,41 @@ class Pagination extends React.Component {
         } 
     }
 
+    getPaginationRange() {
+        const totalcount = (Math.floor(this.props.totalcount / 20) + 2);
+        const offset = this.convertOffsetToCount() + 5;
+        return offset > totalcount ? totalcount : offset;
+    }
+
+    getPaginationCount() {
+        const totalcount = (Math.floor(this.props.totalcount / 20) + 2);
+        const currentoffset = this.convertOffsetToCount();
+        if (totalcount - 5 < 1) {
+            return 1;
+        } else {
+            return currentoffset > totalcount - 5 ? totalcount - 5 : currentoffset;
+        }
+    }
+
   getPaginationList() {
     let paginationitems = [];
-    for (let count = 1; count < (Math.floor(this.props.totalcount / 20) + 2); count++) {
+    for (let count = this.getPaginationCount(); count < this.getPaginationRange(); count++) {
       paginationitems.push(<span key={count} 
                             className={"pagination-item" + (count === this.convertOffsetToCount() ? " active" : "")}
                             onClick={event => {this.pageClick(count * 20 - 20)}}>{count}</span>)
     }
     return paginationitems;
+  }
+
+  showMulti() {
+    const totalcount = (Math.floor(this.props.totalcount / 20) + 2);
+    if (totalcount > 5) {
+        return (
+            <span className="pagination-item pagination-arrow">
+                <i className="fa fa-ellipsis-h" aria-hidden="true"></i>
+            </span>
+        );
+    }
   }
 
   render() {
@@ -61,6 +88,7 @@ class Pagination extends React.Component {
                         <i className="fa fa-angle-left" aria-hidden="true"></i>
                     </span>
                     {this.getPaginationList()}
+                    {this.showMulti()}
                     <span className="pagination-item pagination-arrow" onClick={event => {this.clickRight()}}>
                         <i className="fa fa-angle-right" aria-hidden="true"></i>
                     </span>

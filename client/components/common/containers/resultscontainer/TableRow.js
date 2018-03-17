@@ -68,7 +68,6 @@ class TableRow extends React.Component {
   }
 
   render() {
-      console.log(this.props.exceldata);
     return (
       <tr className={this.activateRow()}
         key={this.props.index}>

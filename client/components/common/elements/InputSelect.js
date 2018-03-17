@@ -63,15 +63,13 @@ class InputDropdown extends React.Component {
   }
 
   getOptions() {
-  if (Object.keys(this.props.options).length === 0) {
-    return (
-    <div className="item">
-      <span className="text">Please Search First</span>
-    </div>
-    );
-}
-
-    this.getMaxOption();
+    if (Object.keys(this.props.options).length === 0) {
+      return (
+      <div className="item">
+        <span className="text">Please Search First</span>
+      </div>
+      );
+  }
     return this.props.options.map((option) => {
       return (
         <div key={option.optionvalue} className="item" onClick={() => this.updateDefaultValue(option.optionvalue, option.optionlabel)}>
@@ -91,7 +89,7 @@ class InputDropdown extends React.Component {
       </div>
       <div className={"menu" + (this.state.show + this.state.isSelectClicked ? "" : " hidden")}>
         {this.getOptions()}
-        </div>
+      </div>
         {/*
         {this.state.show && (
         <div className="menu">

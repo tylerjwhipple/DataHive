@@ -2,11 +2,10 @@ import React from 'react';
 import { graphql } from 'react-apollo';
 import { withApollo } from 'react-apollo/lib/graphql';
 
-import SearchContainer from '../common/containers/searchcontainer/SearchContainer';
 import ResultsContainer from '../common/containers/resultscontainer/ResultsContainer';
 import ResultTableContainer from '../common/containers/resultscontainer/ResultTableContainer';
 import DetailsContainer from '../common/containers/detailscontainer/DetailsContainer';
-import DetailsTableContainers from '../common/containers/detailscontainer/DetailsTableContainers';
+import DetailsTableContainer from '../common/containers/detailscontainer/DetailsTableContainer';
 import FooterContainer from '../common/containers/footercontainer/FooterContainer';
 import SearchInput from '../common/containers/searchcontainer/SearchInput';
 import SearchInputRef from '../common/containers/searchcontainer/SearchInputRef';
@@ -21,14 +20,6 @@ import GET_MEDICATIONS from '../../queries/getMedication';
 import GET_LAB_TEST_TABLE from '../../queries/getLabTestTable';
 import GET_LAB_TEST_SUMMARY from '../../queries/getLabTestSummary';
 
-const searchlist = [
-  {label:'First Name', value: 'firstname'},
-  {label: 'Last Name', value: 'lastname'},
-  {label: 'SSN', value: 'ssn'},
-  {label: 'MRN', value: 'mrn'},
-  {label: 'DOB', value: 'dob'}
-];
-
 const sectionlist = [
   {optionvalue: "Visit", optionlabel: "Visit", type: "table-only"}, 
   {optionvalue: "Clinical Information", optionlabel: "Clinical Information", type: "table-detail"}, 
@@ -41,18 +32,6 @@ let currentactive = {
   selectedoption: '',
   selectedsection: '',
   offset: 0
-}
-
-const visitvariables = {
-  "VisitsViewCondition": {
-    "patientId": currentactive.selectedoption
-  }
-}
-
-const clinicalinfovariables = {
-  "ClinicalInfoViewCondition": {
-    "patientId": currentactive.selectedoption
-  }
 }
 
 class PatientSearchPage extends React.Component {
@@ -70,7 +49,6 @@ class PatientSearchPage extends React.Component {
       isSearchClicked: false,
       patientdropdown: [],
       result: [],
-      exceldata: [],
       totalcount: null,
       activerow: null,
       offset: null,
@@ -78,9 +56,6 @@ class PatientSearchPage extends React.Component {
       labtesttable: [],
       labtestsummary: []
     };
-    this.detaildata = [
-      {labtesttable : []}
-    ];
     this.exceldata = [] 
   }
 
@@ -195,36 +170,28 @@ class PatientSearchPage extends React.Component {
     this.setState({ labtestsummary: result.data.allLabTestSummaryViews.nodes});
   }
 
-  async getResults(GET_QUERY, variableslist, resultview) {
-    const result = await this.props.client.query({
-      query: GET_QUERY,
-      variables: {variableslist}
-    });
-    const results = result.data[resultview].nodes;
-    this.setState({ result: results});
-  }
-
+  //Calls Query for Main Table Rows
   getData(querytype) {
-  if(querytype === "new-query") {
-    currentactive.offset = 0;
-    this.exceldata = [];
-  }
-    this.setState({ activerow: null});
-    if (currentactive.selectedsection === "Visit") {
-      this.getVisits()
-      //this.getResults(GET_VISITS, visitvariables, "allVisitsViews")
-    } else if (currentactive.selectedsection === "Clinical Information") {
-      this.getClinicalInfo() 
-      //this.getResults(GET_CLINICAL_INFO, clinicalinfovariables, "allClinicalInfoViews")
+    if(querytype === "new-query") {
+      currentactive.offset = 0;
+      this.exceldata = [];
     }
+      this.setState({ activerow: null});
+      if (currentactive.selectedsection === "Visit") {
+        this.getVisits()
+      } else if (currentactive.selectedsection === "Clinical Information") {
+        this.getClinicalInfo() 
+      }
   }
 
+  //Calls details for Clinical Info.
   getDetails(activerow) {
     this.getMedication(activerow);
     this.getLabTestTable(activerow);
     this.getLabTestSummary(activerow);
   }
 
+  //Displays Main Results Table and/or Details.
   displayResults() {
     if (Object.keys(this.state.result).length === 0) {
       return <div>No Results</div> 
@@ -248,8 +215,7 @@ class PatientSearchPage extends React.Component {
                 handleOffset={event => this.changeCurrentActive(event, "offset")}
                 getData = {event => this.getData("pagination")}
                 excludelist={excludelist}  
-                exceldata = {this.exceldata}   
-            />
+                exceldata = {this.exceldata} />
           </div>
         );
       } else if (currentactive.selectedsection === "Clinical Information") {
@@ -266,9 +232,11 @@ class PatientSearchPage extends React.Component {
                   activerow={this.state.activerow}
                   showDetails={event => this.showDetails(event)} />
               <DetailsContainer showdetail={this.hideDetails} show={this.state.showdetails}>
-                <DetailsTableContainers detailtype="standard-table" hd="Medications" result={this.state.medications} exclude={excludelist} />
-                <DetailsTableContainers detailtype="one-col-table" hd="Lab Test Summary" result={this.state.labtestsummary} exclude={excludelist} />
-                <DetailsTableContainers detailtype="standard-table" hd="Lab Test Table" result={this.state.labtesttable} exclude={excludelist} />
+                <DetailsTableContainer detailtype="standard-table" hd="Medications" result={this.state.medications} exclude={excludelist} />
+                <DetailsTableContainer detailtype="multi-col-table" colcount={1} hd="Lab Test Summary" result={this.state.labtestsummary} exclude={excludelist} />
+                <DetailsTableContainer detailtype="standard-table" hd="Lab Test Table" result={this.state.labtesttable} exclude={excludelist} />
+                <DetailsTableContainer detailtype="multi-col-table" colcount={3} hd="Lab Test Summary 2" result={this.state.labtestsummary} exclude={excludelist} />
+                <DetailsTableContainer detailtype="multi-col-table" colcount={2} hd="Lab Test Summary 3" result={this.state.labtestsummary} exclude={excludelist} />
               </DetailsContainer>
             </div>
               <FooterContainer 
@@ -276,8 +244,8 @@ class PatientSearchPage extends React.Component {
                       currentoffset = {currentactive.offset}
                       handleOffset = {event => this.changeCurrentActive(event, "offset")}
                       getData = {event => this.getData("pagination")}
-                      exceldata = {this.exceldata}   
-                />
+                      excludelist={excludelist}  
+                      exceldata = {this.exceldata} />
           </div>
         );
         }
@@ -303,21 +271,17 @@ class PatientSearchPage extends React.Component {
         <div className="search-container-bottom">
           <div className="container-col">
             <span className="input-label">Select Patient</span>
-            <InputSelect
-              options={this.state.patientdropdown} 
+            <InputSelect options={this.state.patientdropdown} defaultoption={"Select Patient..."}
               selectedoption={option => this.changeCurrentActive(option, "selectedoption")}
-              defaultoption={"Select Patient..."}
             />
             <span className="input-label">Select Section</span>
-            <InputSelect 
-              options={sectionlist} 
+            <InputSelect options={sectionlist} defaultoption={"Select Section..."}
               selectedoption={option => this.changeCurrentActive(option, "selectedsection")}
-              defaultoption={"Select Section..."}
             />
           </div>
           <div className="container-col">
-          <span className="input-label"></span>
-          <Button text="Get Results" icon="bars" type="search" buttonclick={() => this.getData("new-query")}/>
+            <span className="input-label"></span>
+            <Button text="Get Results" icon="bars" type="search" buttonclick={() => this.getData("new-query")}/>
           </div>
         </div>
         {this.displayResults()}

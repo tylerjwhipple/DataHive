@@ -20,15 +20,11 @@ class Header extends React.Component {
           <HeaderDropdown status="" selected="Caroline S.">
             <HeaderDropdownLink linkto="/account" icon="address-card" text="Account" />
             <HeaderDropdownLink linkto="/settings" icon="cog" text="Settings" />
-            <div className="item">
-              <i className="fa fa-sign-out icon-right" aria-hidden="true"></i>
-              <span className="text">Log Out</span>
-            </div>
+            <HeaderDropdownLink linkto="/logout" icon="sign-out" text="Log Out" />
           </HeaderDropdown>
 
           <HeaderDropdown status="active" selected="Patient Search">
             <HeaderDropdownLink linkto="/patient-search" icon="search" text="Patient Search" />
-            <HeaderDropdownLink linkto="/material-search" icon="search" text="Material Search" />
             <HeaderDropdownLink linkto="/audit-log" icon="search" text="Audit Log" />
           </HeaderDropdown>
 
