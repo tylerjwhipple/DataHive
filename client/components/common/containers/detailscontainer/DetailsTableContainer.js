@@ -39,14 +39,14 @@ class DetailsTableContainer extends React.Component {
 
     getMultiColTd(filteredtablerowdata, count){
         let multitd = [];
-        filteredtablerowdata.map((name) => {
-            multitd.push(<td className="label-td">{transformHeaderValue(name[0])}</td>);
-            multitd.push(<td>{name[1]}</td>);
+        filteredtablerowdata.map((name, index) => {
+            multitd.push(<td key={index * Math.random()} className="label-td">{transformHeaderValue(name[0])}</td>);
+            multitd.push(<td key={Math.random()}>{name[1]}</td>);
         });
         if (filteredtablerowdata.length < count) {
             for (let i = 0; i < (count - filteredtablerowdata.length); i++) {
-                multitd.push(<td className="label-td"></td>);
-                multitd.push(<td></td>);
+                multitd.push(<td key={1 * Math.random()} className="label-td"></td>);
+                multitd.push(<td key={Math.random()} ></td>);
             }
         }
         return multitd;
