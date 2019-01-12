@@ -35,14 +35,22 @@ class TableRow extends React.Component {
         }
     }
 
-    activateTd() {
+    activateTd(tdstyle) {
         if (this.props.resulttype === "table-detail") {
             return (
-                "hover-td" + (this.props.activerow === this.primaryid ? " active" : "")
+                tdstyle + (this.props.activerow === this.primaryid ? " active" : "")
             );
         } else {
-            return "hover-td";
+            return tdstyle;
         }
+    }
+
+    activeDetailIndicator() {
+        if (this.props.resulttype === "table-detail") {
+            return (
+                <i className="fa fa-angle-right" aria-hidden="true"></i>
+            );
+        } else {}
     }
 
   getTableRows() {
@@ -75,8 +83,9 @@ class TableRow extends React.Component {
                 <i className={"fa fa-" + ((this.checkIfActiveCheckbox(this.props.rowid, this.props.primarykey)) ? "check-square-o excel-checkbox active" : "square-o excel-checkbox")} 
                 aria-hidden="true"></i>
           </td>
-          <td className={this.activateTd()}></td>
+          <td className={this.activateTd('hover-td')}></td>
           {this.getTableRows()}
+          <td className={this.activateTd('detail-indicator-td')}>{this.activeDetailIndicator()}</td>
       </tr>
     );
   }

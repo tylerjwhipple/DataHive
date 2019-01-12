@@ -58,6 +58,7 @@ class ResultTableContainer extends React.Component {
                   </th>
                   <th className="hover-th"></th>
                   {this.getHeaderRow()}
+                  <th className="detail-indicator-th"></th>
               </tr>
           </thead>
           <tbody className="search-body-list">

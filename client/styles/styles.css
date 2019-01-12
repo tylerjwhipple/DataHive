@@ -235,8 +235,19 @@ tbody.search-body-list tr.tr-details.active:hover {
   padding: 0px;
 }
 
+.ui.celled.table tr td.detail-indicator-td, .ui.celled.table tr th.detail-indicator-th {
+  width: 20px;
+  padding: 0px;
+  border-left: none;
+  color: #929292;
+  font-size: 17px;
+}
+
 .ui.celled.table tr td.hover-td.active {
   background: #ffb737;
+}
+.ui.celled.table tr td.detail-indicator-td.active {
+  color:  #ffb737;
 }
 
 .ui.celled.table tr td.first-td, .ui.celled.table tr th.first-th {
