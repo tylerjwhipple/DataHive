@@ -194,7 +194,11 @@ class PatientSearchPage extends React.Component {
   //Displays Main Results Table and/or Details.
   displayResults() {
     if (Object.keys(this.state.result).length === 0) {
-      return <div>No Results</div> 
+      return <div className="no-results-container">
+                <img className="no-results-img" src={require('../../imgs/no-results.svg')}  alt="No Results" width="250"/>
+                <div className="no-results-header">No Results Showing.</div>
+                <div className="no-results-text">Start a new search or refine the existing search. Hint: Click Search Patients to show all</div>
+              </div> 
     } else {
       if (currentactive.selectedsection === "Visit") {
         return (
