@@ -1,4 +1,4 @@
-# This App
+# DataHive App
 
 This project was generated with [React](https://github.com/facebook/react) version 15.4.2.
 
