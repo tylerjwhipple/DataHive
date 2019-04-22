@@ -1,12 +1,12 @@
-# DataHive App
+# DataHive Desktop App
 
-This project was generated with [React](https://github.com/facebook/react) version 15.4.2.
+For a working example of the code, click here: https://data-hive-bitbucket.herokuapp.com/#/patient-search
 
-## Development server
+## About This Project
 
-Run `npm run dev` for a dev server. Navigate to `http://localhost:3000/#/patient-search`.
+This project is a basic rough draft of a Desktop Application for searching and displaying app retirement data in a modern way. It is also meant to showcase the capabilities of [React](https://github.com/facebook/react) and reusing components. It includes features like pagination, custom dropdowns, and displaying details. Further features such as exporting to Excel and PDF are coming in the near future.
 
 ## Further help
 
-1. If you click on The "Search Patient" Button it will provide you will all available sample patients in the database to searching capabilities.
-2. The Visit Section does not have a details component when the row is clicked. However, the Clinicial Information does. If you click on any row a pop-over will be displayed with the relevant information.
+1. Clicking on The "Search Patients" Button provides all available sample patients in the database at this time for testing purposes.
+2. When Selecting a Section, The Visit Section does not have a details component when the row result is clicked. However, a Clinicial Information row does. When a row is clicked, a pop-over will be displayed with the relevant information.
